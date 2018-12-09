@@ -1,0 +1,124 @@
+## Copyright 2018 The Closure Compiler Authors. All rights reserved.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##    http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+
+licenses(["notice"])  # Apache 2.0
+
+load("@bazel_tools//tools/build_defs/pkg:pkg.bzl", "pkg_tar")
+
+pkg_tar(
+    name = "externs_tar",
+    srcs = [
+        "browser/deprecated.js",
+        "browser/es6_proxy.js",
+        "browser/fetchapi.js",
+        "browser/fido.js",
+        "browser/fileapi.js",
+        "browser/flash.js",
+        "browser/gecko_css.js",
+        "browser/gecko_dom.js",
+        "browser/gecko_event.js",
+        "browser/gecko_xml.js",
+        "browser/google_legacy.js",
+        "browser/html5.js",
+        "browser/ie_css.js",
+        "browser/ie_dom.js",
+        "browser/ie_event.js",
+        "browser/ie_vml.js",
+        "browser/intersection_observer.js",
+        "browser/intl.js",
+        "browser/iphone.js",
+        "browser/mediakeys.js",
+        "browser/mediasource.js",
+        "browser/page_visibility.js",
+        "browser/streamsapi.js",
+        "browser/url.js",
+        "browser/v8.js",
+        "browser/w3c_abort.js",
+        "browser/w3c_anim_timing.js",
+        "browser/w3c_audio.js",
+        "browser/w3c_batterystatus.js",
+        "browser/w3c_clipboard.js",
+        "browser/w3c_clipboardevent.js",
+        "browser/w3c_composition_event.js",
+        "browser/w3c_css.js",
+        "browser/w3c_css3d.js",
+        "browser/w3c_device_sensor_event.js",
+        "browser/w3c_dom1.js",
+        "browser/w3c_dom2.js",
+        "browser/w3c_dom3.js",
+        "browser/w3c_dom4.js",
+        "browser/w3c_elementtraversal.js",
+        "browser/w3c_event.js",
+        "browser/w3c_event3.js",
+        "browser/w3c_eventsource.js",
+        "browser/w3c_gamepad.js",
+        "browser/w3c_geolocation.js",
+        "browser/w3c_indexeddb.js",
+        "browser/w3c_midi.js",
+        "browser/w3c_navigation_timing.js",
+        "browser/w3c_netinfo.js",
+        "browser/w3c_permissions.js",
+        "browser/w3c_pointer_events.js",
+        "browser/w3c_pointerlock.js",
+        "browser/w3c_range.js",
+        "browser/w3c_requestidlecallback.js",
+        "browser/w3c_rtc.js",
+        "browser/w3c_screen_orientation.js",
+        "browser/w3c_selectors.js",
+        "browser/w3c_serviceworker.js",
+        "browser/w3c_speech.js",
+        "browser/w3c_touch_event.js",
+        "browser/w3c_vibration.js",
+        "browser/w3c_webcrypto.js",
+        "browser/w3c_xml.js",
+        "browser/web_app_manifest.js",
+        "browser/webgl.js",
+        "browser/webgl2.js",
+        "browser/webkit_css.js",
+        "browser/webkit_dom.js",
+        "browser/webkit_event.js",
+        "browser/webkit_notifications.js",
+        "browser/webkit_usercontent.js",
+        "browser/webstorage.js",
+        "browser/whatwg_encoding.js",
+        "browser/window.js",
+        "es3.js",
+        "es5.js",
+        "es6.js",
+        "es6_collections.js",
+    ],
+    strip_prefix = ".",
+)
+
+genrule(
+    name = "externs_zip",
+    srcs = [
+        "externs_tar.tar",
+    ],
+    outs = [
+        "src/externs.zip",
+    ],
+    cmd = " && ".join([
+        "tar -xvzf $(location externs_tar.tar)",
+        "zip -r $(location src/externs.zip) $$(tar -tf $(location externs_tar.tar))",
+    ]),
+)
+
+java_library(
+    name = "externs",
+    resources = [
+        ":externs_zip",
+    ],
+    visibility = ["//visibility:public"],
+)

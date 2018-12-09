@@ -1,0 +1,234 @@
+## Copyright 2018 The Closure Compiler Authors. All rights reserved.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##    http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+
+licenses(["notice"])  # Apache 2.0
+
+java_proto_library(
+    name = "mapping_java_proto",
+    deps = [
+        "//src/com/google/debugging/sourcemap/proto:mapping_proto",
+    ],
+)
+
+# TODO(yannic): Remove dependency cycle.
+java_library(
+    name = "SourceMapConsumerGeneratorV3",
+    srcs = [
+        "SourceMapConsumerV3.java",
+        "SourceMapGeneratorV3.java",
+    ],
+    deps = [
+        ":Base64VLQ",
+        ":FilePosition",
+        ":SourceMapConsumer",
+        ":SourceMapGenerator",
+        ":SourceMapObject",
+        ":SourceMapObjectParser",
+        ":SourceMapParseException",
+        ":SourceMapSection",
+        ":SourceMapSupplier",
+        ":SourceMappingReversable",
+        ":Util",
+        ":mapping_java_proto",
+        "@guava//jar",
+        "@jsr305//jar",
+    ],
+)
+
+java_library(
+    name = "Base64",
+    srcs = [
+        "Base64.java",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "Base64VLQ",
+    srcs = [
+        "Base64VLQ.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":Base64",
+    ],
+)
+
+java_library(
+    name = "FilePosition",
+    srcs = [
+        "FilePosition.java",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "SourceMapConsumer",
+    srcs = [
+        "SourceMapConsumer.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":SourceMapParseException",
+        ":SourceMapping",
+    ],
+)
+
+java_library(
+    name = "SourceMapConsumerFactory",
+    srcs = [
+        "SourceMapConsumerFactory.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":SourceMapConsumerV3",
+        ":SourceMapObject",
+        ":SourceMapObjectParser",
+        ":SourceMapParseException",
+        ":SourceMapSupplier",
+        ":SourceMapping",
+    ],
+)
+
+java_library(
+    name = "SourceMapConsumerV3",
+    visibility = ["//visibility:public"],
+    exports = [
+        ":SourceMapConsumerGeneratorV3",
+    ],
+)
+
+java_library(
+    name = "SourceMapFormat",
+    srcs = [
+        "SourceMapFormat.java",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "SourceMapGenerator",
+    srcs = [
+        "SourceMapGenerator.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":FilePosition",
+        ":SourceMapSection",
+        "@guava//jar",
+        "@jsr305//jar",
+    ],
+)
+
+java_library(
+    name = "SourceMapGeneratorFactory",
+    srcs = [
+        "SourceMapGeneratorFactory.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":SourceMapFormat",
+        ":SourceMapGenerator",
+        ":SourceMapGeneratorV3",
+    ],
+)
+
+java_library(
+    name = "SourceMapGeneratorV3",
+    visibility = ["//visibility:public"],
+    exports = [
+        ":SourceMapConsumerGeneratorV3",
+    ],
+)
+
+java_library(
+    name = "SourceMapObject",
+    srcs = [
+        "SourceMapObject.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":SourceMapSection",
+    ],
+)
+
+java_library(
+    name = "SourceMapObjectParser",
+    srcs = [
+        "SourceMapObjectParser.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":SourceMapObject",
+        ":SourceMapParseException",
+        ":SourceMapSection",
+        "@gson//jar",
+        "@guava//jar",
+    ],
+)
+
+java_library(
+    name = "SourceMapParseException",
+    srcs = [
+        "SourceMapParseException.java",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "SourceMapping",
+    srcs = [
+        "SourceMapping.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":mapping_java_proto",
+    ],
+)
+
+java_library(
+    name = "SourceMappingReversable",
+    srcs = [
+        "SourceMappingReversable.java",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":SourceMapping",
+        ":mapping_java_proto",
+    ],
+)
+
+java_library(
+    name = "SourceMapSection",
+    srcs = [
+        "SourceMapSection.java",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "SourceMapSupplier",
+    srcs = [
+        "SourceMapSupplier.java",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_library(
+    name = "Util",
+    srcs = [
+        "Util.java",
+    ],
+    visibility = ["//visibility:public"],
+)

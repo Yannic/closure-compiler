@@ -1,0 +1,163 @@
+## Copyright 2018 The Closure Compiler Authors. All rights reserved.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##    http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+
+licenses(["notice"])  # Apache 2.0
+
+java_proto_library(
+    name = "mapping_java_proto",
+    deps = [
+        "//src/com/google/debugging/sourcemap/proto:mapping_proto",
+    ],
+)
+
+proto_library(
+    name = "conformance_proto",
+    srcs = [
+        "conformance.proto",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_proto_library(
+    name = "conformance_java_proto",
+    deps = [
+        ":conformance_proto",
+    ],
+)
+
+proto_library(
+    name = "function_info_proto",
+    srcs = [
+        "function_info.proto",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_proto_library(
+    name = "function_info_java_proto",
+    deps = [
+        ":function_info_proto",
+    ],
+)
+
+proto_library(
+    name = "instrumentation_template_proto",
+    srcs = [
+        "instrumentation_template.proto",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+java_proto_library(
+    name = "instrumentation_template_java_proto",
+    deps = [
+        ":instrumentation_template_proto",
+    ],
+)
+
+java_library(
+    name = "jscomp",
+    srcs = glob(
+        [
+            "*.java",
+            "bundle/*.java",
+            "deps/*.java",
+            "ijs/*.java",
+            "lint/*.java",
+            "modules/*.java",
+            "parsing/*.java",
+            "parsing/parser/*.java",
+            "parsing/parser/trees/*.java",
+            "parsing/parser/util/*.java",
+            "transpile/*.java",
+        ],
+        exclude = [
+            "CommandLineRunner.java",
+            "refactoring/RefasterJs.java",
+            "Linter.java",
+            "LinterMain.java",
+            "LintPassConfig.java",
+        ],
+    ),
+    resources = [
+        "parsing/ParserConfig.properties",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":conformance_java_proto",
+        ":function_info_java_proto",
+        ":instrumentation_template_java_proto",
+        ":mapping_java_proto",
+        "//externs",
+        "//src/com/google/debugging/sourcemap:Base64",
+        "//src/com/google/debugging/sourcemap:FilePosition",
+        "//src/com/google/debugging/sourcemap:SourceMapConsumerV3",
+        "//src/com/google/debugging/sourcemap:SourceMapFormat",
+        "//src/com/google/debugging/sourcemap:SourceMapGenerator",
+        "//src/com/google/debugging/sourcemap:SourceMapGeneratorFactory",
+        "//src/com/google/debugging/sourcemap:SourceMapParseException",
+        "//src/com/google/debugging/sourcemap:Util",
+        "//src/com/google/debugging/sourcemap/proto:mapping_proto",
+        "//src/com/google/javascript/jscomp/graph",
+        "//src/com/google/javascript/jscomp/js",
+        "//src/com/google/javascript/jscomp/parsing/parser/util/format",
+        "//src/com/google/javascript/jscomp/regex",
+        "//src/com/google/javascript/jscomp/resources:ResourceLoader",
+        "//src/com/google/javascript/jscomp/type",
+        "//src/com/google/javascript/rhino",
+        "@args4j//jar",
+        "@com_google_auto_value",
+        "@com_google_protobuf//:protobuf_java",
+        "@error_prone_annotations//jar",
+        "@gson//jar",
+        "@guava//jar",
+        "@jsr305//jar",
+    ],
+)
+
+java_binary(
+    name = "CommandLineRunner",
+    srcs = [
+        "CommandLineRunner.java",
+    ],
+    main_class = "com.google.javascript.jscomp.CommandLineRunner",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":conformance_java_proto",
+        ":instrumentation_template_java_proto",
+        ":jscomp",
+        "//src/com/google/javascript/rhino",
+        "@args4j//jar",
+        "@com_google_protobuf//:protobuf_java",
+        "@guava//jar",
+        "@jsr305//jar",
+    ],
+)
+
+java_binary(
+    name = "LinterMain",
+    srcs = [
+        "LintPassConfig.java",
+        "Linter.java",
+        "LinterMain.java",
+    ],
+    main_class = "com.google.javascript.jscomp.LinterMain",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":jscomp",
+        "//src/com/google/javascript/refactoring",
+        "@args4j//jar",
+        "@guava//jar",
+    ],
+)

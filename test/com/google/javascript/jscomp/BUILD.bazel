@@ -1,0 +1,108 @@
+## Copyright 2018 The Closure Compiler Authors. All rights reserved.
+##
+## Licensed under the Apache License, Version 2.0 (the "License");
+## you may not use this file except in compliance with the License.
+## You may obtain a copy of the License at
+##
+##    http://www.apache.org/licenses/LICENSE-2.0
+##
+## Unless required by applicable law or agreed to in writing, software
+## distributed under the License is distributed on an "AS IS" BASIS,
+## WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+## See the License for the specific language governing permissions and
+## limitations under the License.
+
+licenses(["notice"])  # Apache 2.0
+
+java_proto_library(
+    name = "mapping_java_proto",
+    deps = [
+        "//src/com/google/debugging/sourcemap/proto:mapping_proto",
+    ],
+)
+
+java_proto_library(
+    name = "conformance_java_proto",
+    deps = [
+        "//src/com/google/javascript/jscomp:conformance_proto",
+    ],
+)
+
+java_proto_library(
+    name = "function_info_java_proto",
+    deps = [
+        "//src/com/google/javascript/jscomp:function_info_proto",
+    ],
+)
+
+java_proto_library(
+    name = "instrumentation_template_java_proto",
+    deps = [
+        "//src/com/google/javascript/jscomp:instrumentation_template_proto",
+    ],
+)
+
+java_library(
+    name = "jscomp",
+    testonly = True,
+    srcs = glob(
+        [
+            "*.java",
+        ],
+        exclude = ["*Test.java"],
+    ),
+    visibility = ["//test:__subpackages__"],
+    deps = [
+        ":mapping_java_proto",
+        "//src/com/google/debugging/sourcemap:SourceMapConsumerV3",
+        "//src/com/google/javascript/jscomp",
+        "//src/com/google/javascript/jscomp/testing",
+        "//src/com/google/javascript/jscomp/type",
+        "//src/com/google/javascript/rhino",
+        "//src/com/google/javascript/rhino/testing",
+        "//test/com/google/debugging/sourcemap:SourceMapTestCase",
+        "@com_google_protobuf//:protobuf_java",
+        "@error_prone_annotations//jar",
+        "@gson//jar",
+        "@guava//jar",
+        "@guava_testlib//jar",
+        "@jsr305//jar",
+        "@junit//jar",
+        "@mockito//jar",
+        "@objenesis//jar",
+        "@truth//jar",
+    ],
+)
+
+[java_test(
+    name = name[:-5],
+    srcs = [
+        name,
+    ],
+    data = glob(["testdata/**"]),
+    test_class = "com.google.javascript.jscomp." + name[:-5],
+    deps = [
+        ":conformance_java_proto",
+        ":function_info_java_proto",
+        ":instrumentation_template_java_proto",
+        ":jscomp",
+        ":mapping_java_proto",
+        "//src/com/google/debugging/sourcemap:FilePosition",
+        "//src/com/google/debugging/sourcemap:SourceMapConsumer",
+        "//src/com/google/debugging/sourcemap:SourceMapConsumerV3",
+        "//src/com/google/debugging/sourcemap:SourceMapGeneratorV3",
+        "//src/com/google/javascript/jscomp",
+        "//src/com/google/javascript/jscomp:CommandLineRunner",
+        "//src/com/google/javascript/jscomp/graph",
+        "//src/com/google/javascript/jscomp/testing",
+        "//src/com/google/javascript/jscomp/type",
+        "//src/com/google/javascript/rhino",
+        "//src/com/google/javascript/rhino/testing",
+        "//test/com/google/debugging/sourcemap:SourceMapTestCase",
+        "@com_google_protobuf//:protobuf_java",
+        "@gson//jar",
+        "@guava//jar",
+        "@guava_testlib//jar",
+        "@truth//jar",
+    ],
+) for name in glob(["*.java"]) if name.endswith("Test.java")]
